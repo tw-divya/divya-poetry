@@ -1,1 +1,860 @@
+/* =========================================================
+   ABOUT PAGE — "मेरे बारे में"
+   File: css/about-page.css   (load AFTER css/style.css)
 
+   Everything here is scoped under  body.about-page  so no
+   other page can be affected. Theme switching reuses the
+   site's existing  html[data-theme="dark"]  mechanism
+   (set by js/script.js) — no second theme system.
+
+   CONTENTS
+   01. Palette tokens (light + dark)
+   02. Shared header / footer / toggle polish
+   03. Layout primitives (wrap, grid, section numbers)
+   04. Section 01 — Hero + paper collage
+   05. Section 02 — Introduction
+   06. Section 03 — Three parts of my world
+   07. Notes (preserved original About content)
+   08. Section 04 — Closing quote + CTA
+   09. Footer
+   10. Responsive
+   11. Reduced motion
+   ========================================================= */
+
+
+/* =========================================================
+   01. PALETTE TOKENS
+   ========================================================= */
+
+body.about-page {
+  /* About-specific tokens */
+  --ab-bg: #F7F0E4;          /* warm ivory (hero)            */
+  --ab-bg-2: #FBF6EC;        /* slightly lighter (body)      */
+  --ab-paper: #EDE1CC;       /* soft paper / footer          */
+  --ab-paper-deep: #E3D3B6;  /* torn-paper accents           */
+  --ab-head: #741D18;        /* burgundy headings            */
+  --ab-label: #741D18;       /* small labels                 */
+  --ab-text: #66564A;        /* muted brown body             */
+  --ab-gold: #B77B3C;        /* decorative gold              */
+  --ab-line: rgba(183, 123, 60, .5);
+  --ab-line-soft: rgba(116, 29, 24, .14);
+  --ab-card: rgba(237, 225, 204, .72);
+  --ab-card-border: rgba(183, 123, 60, .28);
+  --ab-card-hover: rgba(237, 225, 204, .95);
+  --ab-cta: #741D18;
+  --ab-cta-hover: #5B130F;
+  --ab-cta-text: #FFF8EC;
+  --ab-cta-border: transparent;
+  --ab-shadow: rgba(60, 35, 20, .22);
+  --ab-grain-rgb: ".42 .30 .18";
+  --ab-grain-alpha: .09;
+
+  /* Fonts */
+  --ab-hindi: "Noto Serif Devanagari", "Tiro Devanagari Hindi", "Kohinoor Devanagari", "Mangal", serif;
+  --ab-latin: "Cormorant Garamond", "Noto Serif Devanagari", Georgia, serif;
+  --ab-script-latin: "Caveat", "Cormorant Garamond", cursive;
+  --ab-script-hindi: "Kalam", "Noto Serif Devanagari", cursive;
+
+  /* Layout */
+  --ab-gutter: clamp(3rem, 9vw, 7rem);
+  --ab-pad: clamp(3rem, 6vw, 5.5rem);
+
+  /* Re-point the SHARED tokens so the existing header, mobile menu
+     and theme toggle automatically match this page's palette. */
+  --burgundy: #741D18;
+  --gold: #B77B3C;
+  --surface: #F7F0E4;
+  --surface-raised: #FBF6EC;
+  --ink: #3A2E26;
+  --ink-soft: #66564A;
+  --border: rgba(183, 123, 60, .35);
+
+  background-color: var(--ab-bg-2);
+  color: var(--ab-text);
+}
+
+html[data-theme="dark"] body.about-page {
+  --ab-bg: #17130F;
+  --ab-bg-2: #1B1611;
+  --ab-paper: #241C16;
+  --ab-paper-deep: #2E241B;
+  --ab-head: #F3E6D1;
+  --ab-label: #C18A4B;
+  --ab-text: #D8C8AE;
+  --ab-gold: #C18A4B;
+  --ab-line: rgba(193, 138, 75, .5);
+  --ab-line-soft: rgba(193, 138, 75, .2);
+  --ab-card: rgba(36, 28, 22, .85);
+  --ab-card-border: rgba(193, 138, 75, .3);
+  --ab-card-hover: rgba(46, 36, 27, .98);
+  --ab-cta: #7A1F19;
+  --ab-cta-hover: #92281F;
+  --ab-cta-text: #FFF1DC;
+  --ab-cta-border: rgba(193, 138, 75, .7);
+  --ab-shadow: rgba(0, 0, 0, .55);
+  --ab-grain-rgb: ".9 .75 .55";
+  --ab-grain-alpha: .07;
+
+  --surface: #17130F;
+  --surface-raised: #241C16;
+  --ink: #F3E6D1;
+  --ink-soft: #D8C8AE;
+  --gold: #C18A4B;
+  --border: rgba(193, 138, 75, .32);
+
+  background-color: var(--ab-bg-2);
+  color: var(--ab-text);
+}
+
+
+/* =========================================================
+   02. SHARED HEADER / TOGGLE POLISH
+   (re-uses the site's own markup & JS)
+   ========================================================= */
+
+body.about-page .site-header,
+body.about-page .site-header.scrolled {
+  background: color-mix(in srgb, var(--ab-bg) 95%, transparent);
+  border-bottom: 1px solid var(--ab-line-soft);
+  box-shadow: none;
+  backdrop-filter: blur(10px);
+}
+
+body.about-page .theme-toggle {
+  min-width: 44px;
+  min-height: 34px;
+  background: var(--surface-raised);
+  border-color: var(--ab-card-border);
+}
+
+body.about-page .theme-icon {
+  display: inline-flex;
+  width: 1rem;
+  height: 1rem;
+}
+
+body.about-page .theme-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+body.about-page .theme-icon-sun  { color: var(--ab-gold); }
+body.about-page .theme-icon-moon { color: var(--ab-head); }
+html[data-theme="dark"] body.about-page .theme-icon-moon { color: #E6C58B; }
+
+body.about-page .theme-toggle:focus-visible,
+body.about-page .menu-toggle:focus-visible,
+body.about-page .desktop-nav a:focus-visible,
+body.about-page .mobile-nav a:focus-visible,
+body.about-page .brand:focus-visible {
+  outline: 2px solid var(--ab-gold);
+  outline-offset: 3px;
+}
+
+
+/* =========================================================
+   03. LAYOUT PRIMITIVES
+   ========================================================= */
+
+body.about-page .ab-main {
+  position: relative;
+  overflow-x: clip;   /* decorative art may bleed; page never scrolls sideways */
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .30 0 0 0 0 .18 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+  background-blend-mode: multiply;
+}
+
+html[data-theme="dark"] body.about-page .ab-main {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .85 0 0 0 0 .7 0 0 0 0 .5 0 0 0 .18 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+  background-blend-mode: normal;
+}
+
+body.about-page .ab-wrap {
+  position: relative;
+  width: min(calc(100% - 3rem), 1280px);
+  margin-inline: auto;
+}
+
+body.about-page .ab-grid {
+  display: grid;
+  grid-template-columns: var(--ab-gutter) minmax(0, 1fr);
+  column-gap: clamp(1rem, 3vw, 2.5rem);
+}
+
+/* Small section number with a short gold rule beneath */
+body.about-page .ab-num {
+  margin: 0;
+  padding-top: .35rem;
+  color: var(--ab-gold);
+  font-family: var(--ab-latin);
+  font-size: .9rem;
+  letter-spacing: .14em;
+  line-height: 1;
+}
+
+body.about-page .ab-num::after {
+  content: "";
+  display: block;
+  width: 1.4rem;
+  height: 1px;
+  margin-top: .55rem;
+  background: var(--ab-gold);
+}
+
+body.about-page .ab-label {
+  margin: 0 0 1rem;
+  color: var(--ab-label);
+  font-family: var(--ab-hindi);
+  font-size: .95rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+  line-height: 1.5;
+  text-transform: none;
+}
+
+body.about-page .ab-title {
+  margin: 0;
+  color: var(--ab-head);
+  font-family: var(--ab-hindi);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+body.about-page .ab-rule {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg, var(--ab-line), transparent 92%);
+}
+
+
+/* =========================================================
+   04. SECTION 01 — HERO
+   ========================================================= */
+
+body.about-page .ab-hero {
+  position: relative;
+  padding-top: calc(78px + clamp(2rem, 5vw, 4rem));
+  padding-bottom: clamp(3.5rem, 7vw, 6rem);
+  background-color: var(--ab-bg);
+  background-image:
+    radial-gradient(ellipse 60% 70% at 78% 40%, color-mix(in srgb, var(--ab-paper) 70%, transparent), transparent 70%);
+}
+
+/* torn-paper edge into section 02 */
+body.about-page .ab-hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 18px;
+  background: var(--ab-bg-2);
+  clip-path: polygon(0 100%, 0 58%, 4% 42%, 9% 64%, 15% 36%, 22% 60%, 30% 30%, 38% 56%, 47% 34%, 55% 62%, 63% 38%, 71% 60%, 80% 34%, 88% 58%, 95% 42%, 100% 56%, 100% 100%);
+}
+
+/* torn paper scrap, bottom-left */
+body.about-page .ab-hero::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: clamp(5rem, 16vw, 15rem);
+  height: clamp(3.5rem, 7vw, 6.5rem);
+  background: var(--ab-paper-deep);
+  opacity: .75;
+  clip-path: polygon(0 18%, 14% 8%, 26% 22%, 40% 12%, 56% 30%, 70% 26%, 84% 52%, 100% 70%, 92% 100%, 0 100%);
+  pointer-events: none;
+}
+
+body.about-page .ab-hero__grid {
+  display: grid;
+  grid-template-columns: var(--ab-gutter) minmax(0, .82fr) minmax(0, 1.18fr);
+  column-gap: clamp(1rem, 3vw, 2.5rem);
+  align-items: center;
+}
+
+body.about-page .ab-hero__grid > .ab-num { align-self: start; }
+
+body.about-page .ab-hero__title {
+  font-size: clamp(2.9rem, 6.2vw, 5.4rem);
+  line-height: 1.3;
+  margin-bottom: 1.1rem;
+}
+
+body.about-page .ab-lede {
+  max-width: 19em;
+  margin: 0 0 1.6rem;
+  color: var(--ab-text);
+  font-family: var(--ab-hindi);
+  font-size: clamp(1.05rem, 1.7vw, 1.4rem);
+  line-height: 1.7;
+  text-wrap: balance;
+}
+
+body.about-page .ab-flourish {
+  display: flex;
+  align-items: center;
+  gap: .9rem;
+  margin: 0;
+  color: var(--ab-gold);
+  font-family: var(--ab-script-latin);
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+body.about-page .ab-flourish svg {
+  width: clamp(3rem, 8vw, 6.5rem);
+  height: 14px;
+  flex: none;
+}
+
+/* ---- Paper collage ---- */
+
+body.about-page .ab-collage {
+  position: relative;
+  margin: 0;
+  width: 100%;
+  max-width: 680px;
+  margin-left: auto;
+}
+
+body.about-page .ab-collage__stage {
+  position: relative;
+  width: 86%;
+  aspect-ratio: 1 / .96;
+}
+
+body.about-page .ab-collage__papers {
+  position: absolute;
+  inset: 0;
+  filter: drop-shadow(0 10px 14px var(--ab-shadow));
+}
+
+body.about-page .ab-sheet {
+  position: absolute;
+  display: block;
+}
+
+html[data-theme="dark"] body.about-page .ab-collage__papers {
+  filter: drop-shadow(0 10px 14px var(--ab-shadow)) brightness(.78) saturate(.92);
+}
+
+/* kraft paper, far back */
+body.about-page .ab-sheet--kraft {
+  left: 0;
+  top: 14%;
+  width: 52%;
+  height: 86%;
+  background:
+    linear-gradient(160deg, #E9D9B9, #D9C196 70%, #CDB183);
+  clip-path: polygon(6% 3%, 20% 0, 38% 4%, 58% 1%, 82% 5%, 100% 2%, 100% 100%, 0 100%, 3% 80%, 0 62%, 4% 44%, 1% 24%);
+}
+
+/* burgundy textured sheet */
+body.about-page .ab-sheet--wine {
+  left: 13%;
+  top: 0;
+  width: 68%;
+  height: 100%;
+  background:
+    repeating-linear-gradient(112deg, rgba(255, 255, 255, .035) 0 1px, transparent 1px 7px),
+    radial-gradient(circle at 25% 20%, rgba(255, 120, 90, .18), transparent 45%),
+    linear-gradient(170deg, #8C211B, #5E0F0D);
+  clip-path: polygon(0 4%, 12% 0, 30% 3%, 52% 0, 74% 3%, 90% 0, 100% 5%, 98% 30%, 100% 56%, 97% 80%, 100% 100%, 0 100%, 3% 74%, 0 48%, 2% 22%);
+}
+
+/* parchment sheet on the right */
+body.about-page .ab-sheet--parchment {
+  left: 58%;
+  top: 12%;
+  width: 40%;
+  height: 78%;
+  background:
+    linear-gradient(200deg, #F0E5CC, #E2D2B0);
+  clip-path: polygon(4% 0, 30% 3%, 60% 0, 100% 4%, 97% 34%, 100% 62%, 96% 100%, 60% 97%, 28% 100%, 0 96%, 3% 62%, 0 30%);
+  transform: rotate(3deg);
+}
+
+/* faint inked botanical lines on the wine sheet */
+body.about-page .ab-collage__ink {
+  position: absolute;
+  left: 15%;
+  top: 8%;
+  width: 40%;
+  height: 52%;
+  color: rgba(255, 220, 190, .35);
+  pointer-events: none;
+}
+
+body.about-page .ab-photo {
+  position: absolute;
+  left: 9%;
+  bottom: 0;
+  width: 80%;
+  height: auto;
+  aspect-ratio: 433 / 440;
+  object-fit: cover;          /* crops only the empty transparent headroom */
+  object-position: 50% 100%;
+}
+
+body.about-page .ab-collage__bloom {
+  position: absolute;
+  right: -3%;
+  top: 8%;
+  width: 22%;
+  color: var(--ab-gold);
+  pointer-events: none;
+}
+
+body.about-page .ab-collage__spark {
+  position: absolute;
+  color: var(--ab-gold);
+  pointer-events: none;
+}
+body.about-page .ab-collage__spark--a { left: 3%;  top: 10%; width: 7%; }
+body.about-page .ab-collage__spark--b { right: 14%; bottom: 14%; width: 5%; }
+
+body.about-page .ab-note {
+  position: absolute;
+  right: 0;
+  top: 6%;
+  width: 15%;
+  margin: 0;
+  color: var(--ab-head);
+  font-family: var(--ab-script-hindi);
+  font-size: clamp(.95rem, 1.5vw, 1.35rem);
+  line-height: 1.45;
+  transform: rotate(-9deg);
+  transform-origin: left top;
+}
+
+html[data-theme="dark"] body.about-page .ab-note { color: #E8C99A; }
+
+
+/* =========================================================
+   05. SECTION 02 — INTRODUCTION
+   ========================================================= */
+
+body.about-page .ab-body { background: var(--ab-bg-2); }
+
+body.about-page .ab-intro {
+  padding-block: var(--ab-pad) calc(var(--ab-pad) * .7);
+}
+
+body.about-page .ab-intro__grid {
+  display: grid;
+  grid-template-columns: var(--ab-gutter) minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: clamp(1rem, 3vw, 2.5rem);
+  align-items: start;
+}
+
+body.about-page .ab-intro__title {
+  font-size: clamp(1.75rem, 3.4vw, 3rem);
+  line-height: 1.5;
+  max-width: 12em;
+}
+
+body.about-page .ab-intro__copy {
+  position: relative;
+  padding-top: 2.1rem;
+  padding-left: clamp(0rem, 3vw, 3rem);
+}
+
+body.about-page .ab-intro__copy p {
+  max-width: 34em;
+  margin: 0 0 1.2rem;
+  font-family: var(--ab-hindi);
+  font-size: clamp(.95rem, 1.15vw, 1.05rem);
+  line-height: 1.95;
+  color: var(--ab-text);
+}
+
+body.about-page .ab-intro__copy .ab-rule { margin-top: 2rem; }
+
+body.about-page .ab-intro__sprig {
+  position: absolute;
+  right: -2.6rem;
+  bottom: -.4rem;
+  width: 3.4rem;
+  color: var(--ab-gold);
+  opacity: .8;
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   06. SECTION 03 — THREE PARTS OF MY WORLD
+   ========================================================= */
+
+body.about-page .ab-world {
+  padding-block: calc(var(--ab-pad) * .5) var(--ab-pad);
+}
+
+body.about-page .ab-world__heading {
+  margin: 0 0 1.4rem;
+  color: var(--ab-label);
+  font-family: var(--ab-hindi);
+  font-size: .95rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+  line-height: 1.5;
+}
+
+body.about-page .ab-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(.9rem, 1.8vw, 1.6rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+body.about-page .ab-card {
+  display: flex;
+  align-items: center;
+  gap: clamp(.8rem, 1.6vw, 1.3rem);
+  height: 100%;
+  padding: clamp(1.1rem, 2vw, 1.6rem);
+  background: var(--ab-card);
+  border: 1px solid var(--ab-card-border);
+  border-radius: 4px;
+  transition: transform .35s ease, background-color .35s ease, border-color .35s ease, box-shadow .35s ease;
+}
+
+body.about-page .ab-card:hover {
+  transform: translateY(-4px);
+  background: var(--ab-card-hover);
+  border-color: var(--ab-gold);
+  box-shadow: 0 14px 28px -16px var(--ab-shadow);
+}
+
+body.about-page .ab-card__icon {
+  flex: none;
+  width: clamp(2.8rem, 4.6vw, 3.8rem);
+  height: auto;
+  color: var(--ab-gold);
+}
+
+body.about-page .ab-card__icon--heart { color: var(--ab-head); }
+html[data-theme="dark"] body.about-page .ab-card__icon--heart { color: #D98B76; }
+
+body.about-page .ab-card__title {
+  margin: 0 0 .25rem;
+  color: var(--ab-head);
+  font-family: var(--ab-hindi);
+  font-size: clamp(1.25rem, 1.9vw, 1.55rem);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+
+body.about-page .ab-card__text {
+  margin: 0;
+  font-family: var(--ab-hindi);
+  font-size: clamp(.85rem, 1vw, .95rem);
+  line-height: 1.75;
+  color: var(--ab-text);
+}
+
+
+/* =========================================================
+   07. NOTES — original About content, kept
+   (delete the whole <section class="ab-notes"> in about.html
+    if you prefer the page to match the reference exactly)
+   ========================================================= */
+
+body.about-page .ab-notes {
+  padding-block: calc(var(--ab-pad) * .4) calc(var(--ab-pad) * .6);
+}
+
+body.about-page .ab-notes__grid {
+  display: grid;
+  grid-template-columns: var(--ab-gutter) minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: clamp(1rem, 3vw, 2.5rem);
+}
+
+body.about-page .ab-notes__col { grid-column: auto; }
+body.about-page .ab-notes__col + .ab-notes__col { padding-left: clamp(0rem, 3vw, 3rem); }
+body.about-page .ab-notes__grid > .ab-notes__col:first-of-type { grid-column: 2; }
+
+body.about-page .ab-notes__title {
+  margin: 0 0 1rem;
+  font-size: clamp(1.35rem, 2.1vw, 1.8rem);
+  line-height: 1.55;
+}
+
+body.about-page .ab-notes__col p:not(.ab-label) {
+  max-width: 32em;
+  margin: 0 0 1rem;
+  font-family: var(--ab-hindi);
+  font-size: clamp(.95rem, 1.1vw, 1.02rem);
+  line-height: 1.95;
+}
+
+
+/* =========================================================
+   08. SECTION 04 — CLOSING QUOTE + CTA
+   ========================================================= */
+
+body.about-page .ab-closing {
+  position: relative;
+  padding-block: calc(var(--ab-pad) * .5) calc(var(--ab-pad) * 1.15);
+}
+
+body.about-page .ab-closing::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: clamp(6rem, 22vw, 20rem);
+  height: clamp(4rem, 9vw, 8rem);
+  background: var(--ab-paper-deep);
+  opacity: .7;
+  clip-path: polygon(0 30%, 16% 18%, 30% 34%, 48% 22%, 64% 44%, 80% 40%, 100% 78%, 88% 100%, 0 100%);
+  pointer-events: none;
+}
+
+body.about-page .ab-closing__grid {
+  display: grid;
+  grid-template-columns: var(--ab-gutter) minmax(0, 1fr) auto;
+  column-gap: clamp(1rem, 3vw, 2.5rem);
+  align-items: center;
+}
+
+body.about-page .ab-quote {
+  position: relative;
+  margin: 0;
+  padding: 0 0 0 clamp(2.6rem, 5vw, 4rem);
+  max-width: 36rem;
+}
+
+body.about-page .ab-quote__mark {
+  position: absolute;
+  left: 0;
+  top: -.6rem;
+  color: var(--ab-gold);
+  font-family: var(--ab-latin);
+  font-size: clamp(3.6rem, 6vw, 5rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+body.about-page .ab-quote p {
+  margin: 0;
+  color: var(--ab-head);
+  font-family: var(--ab-hindi);
+  font-size: clamp(1.15rem, 1.9vw, 1.5rem);
+  line-height: 1.7;
+  text-wrap: balance;
+}
+
+body.about-page .ab-quote footer {
+  margin-top: 1.1rem;
+  padding-top: .8rem;
+  border-top: 1px solid var(--ab-line);
+  color: var(--ab-gold);
+  font-family: var(--ab-hindi);
+  font-size: 1.05rem;
+  text-align: right;
+}
+
+body.about-page .ab-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .7rem;
+  min-height: 52px;
+  padding: .8rem 1.9rem;
+  background: var(--ab-cta);
+  color: var(--ab-cta-text);
+  border: 1px solid var(--ab-cta-border);
+  border-radius: 3px;
+  font-family: var(--ab-hindi);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: .01em;
+  line-height: 1.3;
+  white-space: nowrap;
+  box-shadow: 0 12px 24px -14px var(--ab-shadow);
+  transition: background-color .3s ease, transform .3s ease, box-shadow .3s ease;
+}
+
+body.about-page .ab-cta:hover {
+  background: var(--ab-cta-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 18px 28px -14px var(--ab-shadow);
+}
+
+body.about-page .ab-cta span {
+  display: inline-block;
+  transition: transform .3s ease;
+}
+
+body.about-page .ab-cta:hover span { transform: translate(2px, -2px); }
+
+body.about-page .ab-cta:focus-visible {
+  outline: 2px solid var(--ab-gold);
+  outline-offset: 4px;
+}
+
+body.about-page .ab-closing__bloom {
+  position: absolute;
+  right: clamp(-1.5rem, -1vw, 0rem);
+  bottom: -.5rem;
+  width: clamp(5rem, 11vw, 9.5rem);
+  color: var(--ab-gold);
+  opacity: .85;
+  pointer-events: none;
+}
+
+body.about-page .ab-closing__sprig {
+  position: absolute;
+  left: clamp(4.5rem, 13vw, 13rem);
+  bottom: .4rem;
+  width: clamp(4.5rem, 10vw, 8.5rem);
+  color: var(--ab-gold);
+  opacity: .8;
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   09. FOOTER (shared markup, About palette)
+   ========================================================= */
+
+body.about-page .site-footer {
+  background: var(--ab-paper);
+  color: var(--ab-text);
+  border-top: 1px solid var(--ab-line-soft);
+}
+
+html[data-theme="dark"] body.about-page .site-footer { background: #100D0A; }
+
+body.about-page .footer-brand { color: var(--ab-head); }
+body.about-page .footer-inner p { color: var(--ab-text); }
+body.about-page .footer-inner nav a { color: var(--ab-text); }
+body.about-page .footer-inner nav a:hover { color: var(--ab-head); }
+body.about-page .footer-bottom {
+  border-top-color: var(--ab-line);
+  color: var(--ab-text);
+}
+body.about-page .footer-inner nav a:focus-visible {
+  outline: 2px solid var(--ab-gold);
+  outline-offset: 3px;
+}
+
+
+/* =========================================================
+   10. RESPONSIVE
+   ========================================================= */
+
+/* ---- Tablet / small laptop ---- */
+@media (max-width: 1100px) {
+  body.about-page .ab-hero__grid {
+    grid-template-columns: var(--ab-gutter) minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 1360px) {
+  body.about-page .ab-intro__sprig { display: none; }
+}
+
+/* ---- Stack everything (tablet portrait + mobile) ---- */
+@media (max-width: 900px) {
+  body.about-page { --ab-gutter: 0px; }
+
+  body.about-page .ab-hero { padding-top: calc(70px + 1.75rem); }
+
+  body.about-page .ab-hero__grid,
+  body.about-page .ab-intro__grid,
+  body.about-page .ab-notes__grid,
+  body.about-page .ab-closing__grid,
+  body.about-page .ab-grid {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 1.25rem;
+  }
+
+  body.about-page .ab-notes__grid > .ab-notes__col:first-of-type { grid-column: auto; }
+
+  body.about-page .ab-num { padding-top: 0; }
+
+  body.about-page .ab-hero__copy { order: 1; }
+  body.about-page .ab-collage {
+    order: 2;
+    max-width: 520px;
+    margin-inline: auto;
+    margin-top: 1rem;
+  }
+
+  body.about-page .ab-lede { max-width: 24em; }
+
+  body.about-page .ab-intro__copy { padding-top: 0; padding-left: 0; }
+  body.about-page .ab-notes__col + .ab-notes__col { padding-left: 0; }
+  body.about-page .ab-closing__sprig { display: none; }
+  body.about-page .ab-intro__title { max-width: none; }
+
+  body.about-page .ab-cards { grid-template-columns: minmax(0, 1fr); }
+
+  body.about-page .ab-closing__grid { justify-items: start; }
+  body.about-page .ab-quote { max-width: none; }
+  body.about-page .ab-closing { padding-bottom: calc(var(--ab-pad) * 2); }
+  body.about-page .ab-closing__bloom { width: clamp(4.5rem, 16vw, 7rem); }
+}
+
+/* ---- Mobile ---- */
+@media (max-width: 560px) {
+  body.about-page .ab-wrap { width: min(calc(100% - 2rem), 1280px); }
+
+  body.about-page .ab-hero__title { font-size: clamp(2.6rem, 13vw, 3.4rem); }
+
+  body.about-page .ab-collage__stage { width: 100%; }
+
+  /* the handwritten note moves below the collage instead of squeezing beside it */
+  body.about-page .ab-note {
+    position: static;
+    width: auto;
+    margin: 1rem .25rem 0 auto;
+    max-width: 12rem;
+    font-size: 1.1rem;
+    transform: rotate(-4deg);
+    transform-origin: right center;
+    text-align: right;
+  }
+  body.about-page .ab-collage__bloom { right: -1%; width: 20%; }
+
+  body.about-page .ab-card { padding: 1.1rem; }
+
+  body.about-page .ab-cta {
+    width: 100%;
+    white-space: normal;
+  }
+
+  body.about-page .ab-quote { padding-left: 2.6rem; }
+  body.about-page .ab-closing__sprig { display: none; }
+}
+
+/* ---- Very small phones ---- */
+@media (max-width: 360px) {
+  body.about-page .ab-card { flex-direction: column; align-items: flex-start; }
+  body.about-page .ab-flourish { font-size: 1.1rem; }
+}
+
+
+/* =========================================================
+   11. REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  body.about-page .ab-card,
+  body.about-page .ab-cta,
+  body.about-page .ab-cta span {
+    transition: none;
+  }
+  body.about-page .ab-card:hover,
+  body.about-page .ab-cta:hover,
+  body.about-page .ab-cta:hover span {
+    transform: none;
+  }
+}
